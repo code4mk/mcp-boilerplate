@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-coxs-bazar-itinerary-mcp-server = "mcp_server.server:main"
+cox-mcp-server = "mcp_server.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcp_server"]

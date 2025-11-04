@@ -16,14 +16,15 @@ uv sync
 
 ## Usage
 
-### Run with MCP dev (development)
+### Run with MCP dev (development) - inspector tool
+
 ```bash
 uv run mcp dev src/mcp_server/server.py
 ```
 
 ### Run as installed command
 ```bash
-uv run simple-mcp-server
+uv run cox-mcp-server
 ```
 
 ## Requirements
@@ -36,32 +37,43 @@ uv run simple-mcp-server
 ## Project Structure
 
 ```
-src/
-└── mcp_server/
-    ├── server.py           # Main server entry point
-    ├── tools/              # MCP tools
-    │   ├── weather.py      # Weather-related tools
-    │   └── itinerary.py    # Travel itinerary tools
-    ├── resources/          # MCP resources
-    │   └── weather.py      # Weather data resources
-    ├── prompts/            # MCP prompts
-    │   └── travel_prompts.py  # Travel planning prompts
-    └── utils/              # Utilities
-        └── helpers.py      # Helper functions
+.
+├── src/
+│   └── mcp_server/
+│       ├── __init__.py
+│       ├── server.py           # Main server entry point
+│       ├── tools/              # MCP tools
+│       │   ├── __init__.py
+│       │   └── itinerary.py    # Travel itinerary tools
+│       ├── resources/          # MCP resources
+│       │   ├── __init__.py
+│       │   └── weather.py      # Weather data resources
+│       ├── prompts/            # MCP prompts
+│       │   ├── __init__.py
+│       │   └── travel_prompts.py  # Travel planning prompts
+│       └── utils/              # Utilities
+│           ├── __init__.py
+│           ├── helpers.py      # Helper functions
+│           └── register_mcp_components.py  # MCP component registration
+├── tests/                      # Test directory
+├── README.md                   # Project documentation
+├── license                     # MIT License
+├── pyproject.toml              # Project configuration and dependencies
+└── uv.lock                     # Dependency lock file
 ```
 
-## connect to cluade desktop 
+## connect to cluade desktop (local development)
 
 ```json
 {
   "mcpServers": {
-    "coxs-bazar-itinerary": {
+    "coxs-bazar-itinerary-mcp": {
       "command": "uv",
       "args": [
         "--directory",
         "/Users/code4mk/Documents/GitHub/gumpper-group/mcp-explore/mcp-server-python-template",
         "run",
-        "simple-mcp-server"
+        "cox-mcp-server"
       ]
     }
   }
