@@ -27,6 +27,7 @@ uv run mcp dev src/mcp_server/server.py
 uv run cox-mcp-server
 ```
 
+
 ## Requirements
 
 - Python 3.13+
@@ -56,13 +57,19 @@ uv run cox-mcp-server
 │           ├── helpers.py      # Helper functions
 │           └── register_mcp_components.py  # MCP component registration
 ├── tests/                      # Test directory
+├── Dockerfile                  # Docker configuration
+├── .dockerignore               # Docker ignore file
 ├── README.md                   # Project documentation
 ├── license                     # MIT License
 ├── pyproject.toml              # Project configuration and dependencies
 └── uv.lock                     # Dependency lock file
 ```
 
-## connect to cluade desktop (local development)
+## Connect to Claude Desktop
+
+### Option 1: Local Development (without Docker)
+
+Add this configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 ```json
 {
@@ -73,6 +80,35 @@ uv run cox-mcp-server
         "--directory",
         "/Users/code4mk/Documents/GitHub/gumpper-group/mcp-explore/mcp-server-python-template",
         "run",
+        "cox-mcp-server"
+      ]
+    }
+  }
+}
+```
+
+### Option 2: Using Docker
+
+First, build the Docker image:
+
+```bash
+docker build \
+  --platform=linux/amd64 \
+  --build-arg PYTHON_VERSION=3.12-slim \
+  -t cox-mcp-server .
+```
+
+Then add this configuration to your Claude Desktop config file:
+
+```json
+{
+  "mcpServers": {
+    "coxs-bazar-itinerary-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
         "cox-mcp-server"
       ]
     }
