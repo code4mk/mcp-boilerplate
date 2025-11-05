@@ -1,47 +1,58 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-*.pyo
-*.pyd
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
 .Python
-build/
-dist/
-wheels/
 *.egg-info
+dist
+build
 *.egg
 
 # Virtual environments
-.venv
 venv/
-ENV/
 env/
+ENV/
+.venv
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
 
-# Git
-.git/
-.gitignore
-
-# Documentation (keep README.md as it's required by hatchling build)
-# README.md is needed for the build process
+# Documentation
+_docs/
 *.md
 !README.md
 
 # Tests
 tests/
-*.pytest_cache/
+*.pytest_cache
 
-# OS
-.DS_Store
-Thumbs.db
+# CI/CD
+.github/
 
-# Other
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Lock files (optional, uncomment if you want to exclude)
+# uv.lock
+
+# Logs
 *.log
+
+# Others
 .env
-.env.local
+.env.*
+license
 

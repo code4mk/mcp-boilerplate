@@ -49,22 +49,27 @@ uv run cox-mcp-server
 │   └── mcp_server/
 │       ├── __init__.py
 │       ├── server.py           # Main server entry point
-│       ├── tools/              # MCP tools
+│       ├── components/         # MCP components
 │       │   ├── __init__.py
-│       │   └── itinerary.py    # Travel itinerary tools
-│       ├── resources/          # MCP resources
-│       │   ├── __init__.py
-│       │   └── weather.py      # Weather data resources
-│       ├── prompts/            # MCP prompts
-│       │   ├── __init__.py
-│       │   └── travel_prompts.py  # Travel planning prompts
+│       │   ├── tools/          # MCP tools
+│       │   │   ├── __init__.py
+│       │   │   └── itinerary.py    # Travel itinerary tools
+│       │   ├── resources/      # MCP resources
+│       │   │   ├── __init__.py
+│       │   │   └── weather.py      # Weather data resources
+│       │   └── prompts/        # MCP prompts
+│       │       ├── __init__.py
+│       │       └── travel_prompts.py  # Travel planning prompts
 │       └── utils/              # Utilities
 │           ├── __init__.py
 │           ├── helpers.py      # Helper functions
+│           ├── types.py        # Type definitions
 │           └── register_mcp_components.py  # MCP component registration
 ├── tests/                      # Test directory
+├── _docs/                      # Documentation files
 ├── Dockerfile                  # Docker configuration
 ├── .dockerignore               # Docker ignore file
+├── glama.json                  # Glama configuration
 ├── README.md                   # Project documentation
 ├── license                     # MIT License
 ├── pyproject.toml              # Project configuration and dependencies
