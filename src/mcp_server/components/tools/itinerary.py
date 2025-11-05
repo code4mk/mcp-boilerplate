@@ -24,27 +24,39 @@ def register_itinerary_tools(mcp):
         from mcp_server.components.resources.weather import get_temperature_forecast
         from mcp_server.components.prompts.travel_prompts import get_prompt
         
+        elicitation_note = ""  # To store any warnings about client capabilities
+        
         # Elicitation: Suggest minimum 2 days for a better itinerary
         if days == 1:
-            print("Elicitation: Suggest minimum 2 days for a better itinerary")
-            result = await ctx.elicit(
-                message=(
-                    f"⚠️ Only 1 day detected for your itinerary starting on {start_date}! "
-                    "For a meaningful travel experience, we recommend at least 2 days. "
-                    "This allows for varied activities, proper rest, and a better exploration of the destination. "
-                    "Would you like to extend your trip to 2 or more days?"
-                ),
-                schema=ItineraryPreferences,
-            )
-            
-            if result.action == "accept" and result.data:
-                if result.data.extendTrip:
-                    # Use the new extended days
-                    days = max(result.data.newDays, 2)  # Ensure at least 2 days
+            try:
+                print("Elicitation: Suggest minimum 2 days for a better itinerary")
+                result = await ctx.elicit(
+                    message=(
+                        f"⚠️ Only 1 day detected for your itinerary starting on {start_date}! "
+                        "For a meaningful travel experience, we recommend at least 2 days. "
+                        "This allows for varied activities, proper rest, and a better exploration of the destination. "
+                        "Would you like to extend your trip to 2 or more days?"
+                    ),
+                    schema=ItineraryPreferences,
+                )
+                
+                if result.action == "accept" and result.data:
+                    if result.data.extendTrip:
+                        # Use the new extended days
+                        days = max(result.data.newDays, 2)  # Ensure at least 2 days
+                    else:
+                        return "[CANCELLED] Itinerary generation cancelled. Please plan for at least 2 days for a better experience."
                 else:
-                    return "[CANCELLED] Itinerary generation cancelled. Please plan for at least 2 days for a better experience."
-            else:
-                return "[CANCELLED] Itinerary generation cancelled by user."
+                    return "[CANCELLED] Itinerary generation cancelled by user."
+            except (AttributeError, NotImplementedError, Exception) as e:
+                # If elicitation is not supported by the client, continue with 1 day
+                # but add a warning message to the output
+                print(f"Note: Elicitation not supported by client ({type(e).__name__}). Proceeding with 1-day itinerary.")
+                elicitation_note = (
+                    "ℹ️ NOTE: Your MCP client does not support interactive elicitation. "
+                    "We recommend at least 2 days for a better travel experience. "
+                    "Proceeding with 1-day itinerary. and very last add the note that this client does not support interactive elicitation\n\n"
+                )
         
         # Parse start date
         try:
@@ -58,10 +70,11 @@ def register_itinerary_tools(mcp):
         # Use the MCP prompt for generating itinerary
         generate_itinerary_prompt = get_prompt('generate_itinerary')
         if generate_itinerary_prompt:
-            return generate_itinerary_prompt(days, temp_list, start_date)
+            itinerary_result = generate_itinerary_prompt(days, temp_list, start_date)
+            return elicitation_note + itinerary_result
         
         # Fallback if prompt not found
-        return "Error: Could not load itinerary prompt"
+        return elicitation_note + "Error: Could not load itinerary prompt"
     
     @mcp.tool()
     def get_activity_suggestions(temperature: float, time_of_day: str = "afternoon"):
