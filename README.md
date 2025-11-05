@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides travel planning tools and weather information for Cox's Bazar, Bangladesh.
 
+<a href="https://glama.ai/mcp/servers/@code4mk/coxs-bazar-itinerary-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@code4mk/coxs-bazar-itinerary-mcp-server/badge" alt="Cox's Bazar AI Itinerary Server MCP server" />
+</a>
+
 ## Features
 
 - **Weather Tools**: Get temperature forecasts and detailed weather information
@@ -140,4 +144,3 @@ Add this configuration to your Claude Desktop config file:
 ## License
 
 MIT
-
