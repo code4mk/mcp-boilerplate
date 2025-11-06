@@ -16,9 +16,10 @@ from mcp_server.mcp_instance import mcp
 load_dotenv()
 
 base_dir = Path(__file__).parent
+transport_name = os.environ.get("TRANSPORT_NAME") or "stdio"
 
 # Auto-register all MCP components (tools, prompts, resources)
-register_mcp_components(base_dir)
+register_mcp_components(base_dir, transport=transport_name)
 
 
 def main():
@@ -26,8 +27,8 @@ def main():
     print("🌴 Starting Cox's Bazar AI Itinerary MCP server...")
     print("📍 Location: Cox's Bazar, Bangladesh")
     print("🚀 Server ready!")
-    transport_name = os.environ.get("TRANSPORT_NAME") or "stdio"
     mcp.run(transport=transport_name)
+    
 
 if __name__ == "__main__":
     main()
