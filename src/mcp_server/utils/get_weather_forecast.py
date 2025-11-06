@@ -59,7 +59,8 @@ def get_weather_forecast(start_date: str, days: int) -> Dict[str, Any]:
         
         # Debug: Check if API returned an error
         if "error" in data:
-            raise Exception(f"Open-Meteo API error: {data.get('reason', 'Unknown error')}")
+            print(f"⚠️  Open-Meteo API error: {data.get('reason', 'Unknown error')}. Using fallback data.")
+            return get_fallback_forecast(start_date_str, end_date_str, days)
         
         # Parse the forecast data
         daily = data.get("daily", {})
@@ -102,10 +103,10 @@ def get_weather_forecast(start_date: str, days: int) -> Dict[str, Any]:
             "forecast": forecast
         }
         
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         # Fallback to mock data if API fails
         print(f"⚠️  Open-Meteo API error: {e}. Using fallback data.")
-        #return get_fallback_forecast(start_date_str, end_date_str, days)
+        return get_fallback_forecast(start_date_str, end_date_str, days)
 
 
 def get_weather_description(weathercode: int) -> str:
