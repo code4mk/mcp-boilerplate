@@ -1,175 +1,116 @@
-"""Travel-related prompts for AI itinerary generation."""
-from datetime import datetime, timedelta
-from dateutil import parser
+from mcp_server.mcp_instance import mcp
+from typing import Dict, Any
 
-# Store prompt functions for reuse by tools
-_prompt_functions = {}
-
-def register_travel_prompts(mcp):
-    """Register travel prompts with the MCP server."""
-    
-    @mcp.prompt(
-        title="Cox's Bazar AI Itinerary",
-        description="Generate day-by-day itinerary based on number of days, temperature forecast, and start date"
-    )
-    def generate_itinerary(days: int, temp_list: list, start_date: str) -> str:
-        """
-        AI prompt for generating itinerary with actual dates and daily temperatures.
-        
-        Args:
-            days: Number of days for the trip
-            temp_list: List of daily temperatures in Celsius
-            start_date: Start date of the trip
-        
-        Returns:
-            Formatted prompt for AI
-        """
-        # Parse start date
-        try:
-            start_dt = parser.parse(start_date)
-        except (ValueError, TypeError):
-            start_dt = datetime.today()
-        
-        normalized_start = start_dt.strftime("%d %b %Y")
-        
-        # Build prompt for AI
-        prompt = (
-            f"You are a travel expert. Generate a {days}-day itinerary for Cox's Bazar, Bangladesh. "
-            f"The trip starts on {normalized_start}. "
-            "Include morning, afternoon, and evening activities for each day. "
-            "Each day's activities should consider the following temperatures in °C:\n"
-        )
-        
-        for i, temp in enumerate(temp_list):
-            date_str = (start_dt + timedelta(days=i)).strftime("%d %b %Y")
-            prompt += f"- {date_str}: {temp}°C\n"
-        
-        prompt += (
-            "\nMake the itinerary creative, diverse, enjoyable, and unique for each day. "
-            "Suggest beaches, sightseeing, food, and local experiences."
-        )
-        
-        return prompt
-    
-    # Store prompt function for reuse
-    _prompt_functions['generate_itinerary'] = generate_itinerary
-    
-    @mcp.prompt(
-        title="Detailed Cox's Bazar Itinerary",
-        description="Generate detailed itinerary with budget and interests"
-    )
-    def generate_detailed_itinerary(
-        days: int,
-        temp_list: list,
-        start_date: str,
-        budget: str = "moderate",
-        interests: list = None
-    ) -> str:
-        """
-        Generate a detailed AI prompt with budget and interests.
-        
-        Args:
-            days: Number of days
-            temp_list: Daily temperatures
-            start_date: Start date
-            budget: "budget", "moderate", or "luxury"
-            interests: List of interests (e.g., ["adventure", "relaxation", "culture"])
-        
-        Returns:
-            Detailed prompt for AI
-        """
-        if interests is None:
-            interests = ["beaches", "local culture", "food"]
-        
-        # Parse start date
-        try:
-            start_dt = parser.parse(start_date)
-        except (ValueError, TypeError):
-            start_dt = datetime.today()
-        
-        normalized_start = start_dt.strftime("%d %b %Y")
-        
-        prompt = (
-            f"🌴 CREATE A DETAILED {days}-DAY ITINERARY FOR COX'S BAZAR, BANGLADESH\n\n"
-            f"📅 Start Date: {normalized_start}\n"
-            f"💰 Budget Level: {budget.upper()}\n"
-            f"🎯 Interests: {', '.join(interests)}\n\n"
-            f"🌡️ DAILY TEMPERATURES:\n"
-        )
-        
-        for i, temp in enumerate(temp_list):
-            date_str = (start_dt + timedelta(days=i)).strftime("%d %b %Y")
-            prompt += f"  Day {i+1} ({date_str}): {temp}°C\n"
-        
-        budget_guidelines = {
-            "budget": "Focus on affordable options, local eateries, free activities, budget hotels (1000-2000 BDT/night)",
-            "moderate": "Mix of mid-range restaurants, popular attractions, comfortable hotels (3000-5000 BDT/night)",
-            "luxury": "Premium experiences, fine dining, luxury resorts (8000+ BDT/night), private tours"
-        }
-        
-        prompt += (
-            f"\n💵 BUDGET GUIDELINES:\n{budget_guidelines.get(budget, budget_guidelines['moderate'])}\n\n"
-            f"📋 REQUIREMENTS:\n"
-            f"For each day, provide:\n"
-            f"1. Morning activities (with specific timings)\n"
-            f"2. Lunch recommendations (restaurant names & dishes)\n"
-            f"3. Afternoon activities\n"
-            f"4. Evening activities\n"
-            f"5. Dinner recommendations\n"
-            f"6. Estimated daily costs in BDT\n"
-            f"7. Travel tips and weather considerations\n\n"
-            f"🎯 Focus on: {', '.join(interests)}\n"
-            f"Make it creative, practical, and tailored to the temperature conditions!"
-        )
-        
-        return prompt
-    
-    # Store prompt function for reuse
-    _prompt_functions['generate_detailed_itinerary'] = generate_detailed_itinerary
-    
-    @mcp.prompt(
-        title="Activity Suggestions",
-        description="Suggest activities based on weather conditions"
-    )
-    def suggest_activities(temperature: float, weather_condition: str = "clear") -> str:
-        """
-        Generate prompt for activity suggestions based on weather.
-        
-        Args:
-            temperature: Temperature in Celsius
-            weather_condition: Weather condition ("clear", "rainy", "cloudy")
-        
-        Returns:
-            Prompt for activity suggestions
-        """
-        prompt = (
-            f"Suggest activities for Cox's Bazar with current conditions:\n"
-            f"🌡️ Temperature: {temperature}°C\n"
-            f"🌤️ Weather: {weather_condition}\n\n"
-            f"Provide:\n"
-            f"- 5 suitable activities\n"
-            f"- Why each activity is good for these conditions\n"
-            f"- Estimated duration and cost in BDT\n"
-            f"- Safety tips if needed\n"
-        )
-        
-        return prompt
-    
-    # Store prompt function for reuse
-    _prompt_functions['suggest_activities'] = suggest_activities
-
-
-def get_prompt(prompt_name: str):
+@mcp.prompt()
+async def generate_itinerary_prompt(days: int, start_date: str) -> str:
     """
-    Get a registered prompt function by name.
+    Full workflow: fetch daily temperatures + generate AI itinerary.
+    Uses the registered MCP prompt 'generate_itinerary' for consistency.
     
     Args:
-        prompt_name: Name of the prompt function
+        days: Number of days for the trip
+        start_date: Start date (e.g., "2025-01-15", "15 Jan 2025", "today")
     
     Returns:
-        The prompt function
-    
-    Raises:
-        KeyError: If prompt not found
+        Formatted prompt for AI to generate detailed itinerary
     """
-    return _prompt_functions.get(prompt_name)
+    return f"""Generate a detailed {days}-day itinerary for Cox's Bazar, Bangladesh starting from {start_date}.
+
+Consider the following in your itinerary:
+
+1. **Daily Schedule:**
+   - Morning activities (6:00 AM - 12:00 PM)
+   - Afternoon activities (12:00 PM - 6:00 PM)
+   - Evening activities (6:00 PM onwards)
+
+2. **Weather-Based Recommendations:**
+   - Suggest indoor activities for hot afternoons (>32°C)
+   - Recommend beach activities for pleasant weather (25-30°C)
+   - Include sunrise/sunset timings for beach visits
+
+3. **Must-Visit Places:**
+   - Laboni Beach (main beach, shopping, restaurants)
+   - Inani Beach (pristine, less crowded)
+   - Himchari National Park (waterfalls, nature trails)
+   - Marine Drive (scenic coastal road)
+   - Aggameda Khyang (Buddhist monastery)
+   - Ramu Buddhist Village (cultural experience)
+   - Maheshkhali Island (day trip)
+   - Sugandha Beach (sunset views)
+   - Bangabandhu Safari Park (wildlife)
+
+4. **Activities:**
+   - Beach walks and photography
+   - Water sports (surfing, parasailing, jet skiing)
+   - Boat rides and island hopping
+   - Seafood dining experiences
+   - Local market exploration
+   - Cultural site visits
+   - Sunrise/sunset viewing
+
+5. **Practical Tips:**
+   - Best times to visit each location
+   - Transportation suggestions
+   - Local cuisine recommendations
+   - Safety considerations
+   - Budget estimates
+
+Please create a day-by-day itinerary with specific timings, activities, and practical tips."""
+
+
+@mcp.prompt()
+async def weather_based_activities_prompt(weather_data: Dict[str, Any]) -> str:
+    """
+    Generate activity suggestions based on weather forecast.
+    
+    Args:
+        weather_data: Weather forecast data
+    
+    Returns:
+        Formatted prompt with weather-based activity suggestions
+    """
+    forecast = weather_data.get("forecast", [])
+    
+    location = weather_data.get('location', 'Cox\'s Bazar')
+    days = weather_data.get('days', 0)
+    start_date = weather_data.get('start_date', 'N/A')
+    
+    prompt = f"""Based on the weather forecast for Cox's Bazar, suggest optimal activities for each day:
+
+Location: {location}
+Trip Duration: {days} days
+Start Date: {start_date}
+
+Daily Weather Summary:
+"""
+    
+    for day in forecast:
+        day_num = day.get('day', 0)
+        date = day.get('date', 'N/A')
+        weather = day.get('weather', 'N/A')
+        temp_min = day.get('temp_min', 0)
+        temp_max = day.get('temp_max', 0)
+        temp_avg = day.get('temp_avg', 0)
+        precipitation = day.get('precipitation', 0)
+        windspeed = day.get('windspeed', 0)
+        sunrise = day.get('sunrise', 'N/A')
+        sunset = day.get('sunset', 'N/A')
+        
+        prompt += f"\nDay {day_num} ({date}):\n"
+        prompt += f"- Weather: {weather}\n"
+        prompt += f"- Temperature: {temp_min}°C - {temp_max}°C (Avg: {temp_avg}°C)\n"
+        prompt += f"- Precipitation: {precipitation}mm\n"
+        prompt += f"- Wind Speed: {windspeed} km/h\n"
+        prompt += f"- Sunrise: {sunrise} | Sunset: {sunset}\n"
+    
+    prompt += """
+Based on this weather forecast, please provide:
+1. Best activities for each day considering the weather conditions
+2. Time-specific recommendations (morning/afternoon/evening)
+3. Indoor alternatives for rainy or very hot days
+4. Optimal times for beach activities
+5. Photography opportunities (sunrise/sunset)
+6. Dining suggestions based on weather
+"""
+    
+    return prompt

@@ -1,64 +1,65 @@
-import importlib
-import inspect
-from pathlib import Path
+"""
+Dynamic MCP Component Registration Utility.
 
-def register_mcp_components(mcp_instance, base_dir: Path):
+Automatically discovers and imports all tools, prompts, and resources
+from their respective component directories.
+"""
+import importlib
+from pathlib import Path
+from typing import Any
+
+
+def register_mcp_components(base_dir: Path) -> None:
     """
-    Auto-discover and register all MCP components (tools, prompts, resources).
+    Dynamically import all MCP components (tools, prompts, resources).
     
-    This function automatically registers all three types of MCP components
-    in one call by scanning the standard directories for modules with
-    registration functions (functions that start with 'register_').
+    This function scans the components directory and automatically imports
+    all Python modules, which triggers their @mcp.tool(), @mcp.prompt(),
+    and @mcp.resource() decorators.
     
     Args:
-        mcp_instance: The FastMCP server instance
-        base_dir: The base directory of the mcp_server package (usually Path(__file__).parent)
-    
-    Example:
-        >>> from pathlib import Path
-        >>> base_dir = Path(__file__).parent
-        >>> register_mcp_components(mcp, base_dir)
-        🔍 Auto-discovering and registering MCP components...
-        ✅ Registered: mcp_server.components.tools.itinerary.register_itinerary_tools
-        ✅ Registered: mcp_server.components.prompts.travel_prompts.register_travel_prompts
-        ✅ Registered: mcp_server.components.resources.weather.register_weather_resources
-        ✨ All MCP components registered!
+        mcp: The FastMCP instance to register components with
+        base_dir: Base directory of the MCP server (usually Path(__file__).parent from server.py)
     """
-    print("🔍 Auto-discovering and registering MCP components...")
+    components_dir = base_dir / "components"
+    component_types = ["tools", "prompts", "resources"]
     
-    # Define component directories and their module prefixes
-    components = [
-        (base_dir / "components" / "tools", "mcp_server.components.tools"),
-        (base_dir / "components" / "prompts", "mcp_server.components.prompts"),
-        (base_dir / "components" / "resources", "mcp_server.components.resources"),
-    ]
+    registered_count = {
+        "tools": 0,
+        "prompts": 0,
+        "resources": 0
+    }
     
-    # Scan and register each component type
-    for component_dir, module_prefix in components:
-        if not component_dir.exists():
+    for component_type in component_types:
+        component_path = components_dir / component_type
+        
+        if not component_path.exists():
+            print(f"⚠️  Warning: {component_type} directory not found at {component_path}")
             continue
         
-        # Find all Python files except __init__.py and private modules
-        for file_path in component_dir.glob("*.py"):
-            if file_path.name.startswith("_"):
-                continue
-            
-            module_name = file_path.stem
-            full_module_path = f"{module_prefix}.{module_name}"
+        # Find all Python files in the component directory
+        python_files = [
+            f for f in component_path.glob("*.py")
+            if f.name != "__init__.py" and not f.name.startswith("_")
+        ]
+        
+        for py_file in python_files:
+            module_name = f"mcp_server.components.{component_type}.{py_file.stem}"
             
             try:
-                # Import the module
-                module = importlib.import_module(full_module_path)
-                
-                # Look for registration functions (functions that start with 'register_')
-                for name, obj in inspect.getmembers(module):
-                    if (inspect.isfunction(obj) and 
-                        name.startswith('register_') and 
-                        obj.__module__ == full_module_path):
-                        # Call the registration function
-                        obj(mcp_instance)
-                        print(f"✅ Registered: {full_module_path}.{name}")
+                # Import the module (this triggers the decorators)
+                importlib.import_module(module_name)
+                registered_count[component_type] += 1
+                print(f"✅ Registered {component_type[:-1]}: {py_file.stem}")
             except Exception as e:
-                print(f"⚠️  Warning: Could not register {full_module_path}: {e}")
+                print(f"❌ Error importing {module_name}: {e}")
+                # Continue with other modules even if one fails
+                continue
     
-    print("✨ All MCP components registered!")
+    # Print summary
+    print("\n📦 Registration Summary:")
+    print(f"   🔧 Tools: {registered_count['tools']}")
+    print(f"   💬 Prompts: {registered_count['prompts']}")
+    print(f"   📚 Resources: {registered_count['resources']}")
+    print(f"   📊 Total: {sum(registered_count.values())} components registered\n")
+
