@@ -1,6 +1,7 @@
 """Type definitions for MCP server configuration."""
 
 from typing import TypedDict, Literal, Collection, Any
+from mcp.types import Icon
 
 
 class FastMCPConfigDict(TypedDict, total=False):
@@ -14,6 +15,7 @@ class FastMCPConfigDict(TypedDict, total=False):
     name: str
     instructions: str
     website_url: str
+    icons: list[Icon]
     
     # Server settings
     debug: bool
