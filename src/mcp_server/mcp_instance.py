@@ -15,13 +15,7 @@ transport_name = os.environ.get("TRANSPORT_NAME") or "stdio"
 port = os.environ.get("PORT") or 8000
 
 fast_mcp_config: FastMCPConfigDict = {
-    "name": "Cox's Bazar AI Itinerary MCP",
-    "icons": [
-        Icon(
-            src="https://raw.githubusercontent.com/code4mk/coxs-bazar-itinerary-mcp-server/refs/heads/main/cox-mcp.jpeg",
-            mimeType="image/jpeg"
-        )
-    ]
+    "name": "Cox's Bazar AI Itinerary MCP"
 }
 
 if transport_name == "sse" or transport_name == "streamable-http":
