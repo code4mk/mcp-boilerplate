@@ -7,10 +7,10 @@ if __name__ == "__main__" or "mcp_server" not in sys.modules:
     src_path = Path(__file__).parent.parent  # This points to src/
     if str(src_path) not in sys.path:
         sys.path.insert(0, str(src_path))
+
 from dotenv import load_dotenv
 from mcp_server.utils.register_mcp_components import register_mcp_components
 from mcp_server.mcp_instance import mcp
-
 
 
 load_dotenv()
@@ -29,6 +29,6 @@ def main():
     print("🚀 Server ready!")
     mcp.run(transport=transport_name)
     
-
+    
 if __name__ == "__main__":
     main()

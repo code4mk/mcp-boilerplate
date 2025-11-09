@@ -1,7 +1,6 @@
 """Elicitation utilities for MCP server."""
-from mcp.server.fastmcp import Context
+from fastmcp import Context
 from mcp_server.models.itinerary_models import ItineraryPreferences
-
 
 async def elicit_trip_extension(
     ctx: Context,
@@ -47,7 +46,7 @@ async def elicit_trip_extension(
                     "This allows for varied activities, proper rest, and a better exploration of the destination. "
                     f"Would you like to extend your trip to {min_days} or more days?"
                 ),
-                schema=ItineraryPreferences,
+                response_type=ItineraryPreferences,
             )
             
             if result.action == "accept" and result.data:

@@ -1,14 +1,14 @@
-from mcp_server.mcp_instance import mcp
-from mcp.server.fastmcp import Context
+import json
+from fastmcp import Context
 from datetime import datetime
 from dateutil import parser
-from mcp_server.components.prompts.travel_prompts import generate_itinerary_prompt, weather_based_activities_prompt
+from mcp_server.mcp_instance import mcp
 from mcp_server.utils.get_weather_forecast import get_activity_suggestions as get_suggestions
-from mcp_server.components.resources.weather import resource_weather_forecast
 from mcp_server.utils.elicitation import elicit_trip_extension
+from mcp_server.core.prompts.travel import get_itinerary_prompt, get_weather_based_activities_prompt
 
 @mcp.tool()
-async def cox_ai_itinerary(start_date: str, days: int, ctx: Context) -> str:
+async def cox_ai_itinerary(ctx: Context, start_date: str, days: int, ) -> str:
     """
     Full workflow: fetch daily temperatures + generate AI itinerary.
     Uses the registered MCP prompt 'generate_itinerary' for consistency.
@@ -36,13 +36,14 @@ async def cox_ai_itinerary(start_date: str, days: int, ctx: Context) -> str:
         start_date = datetime.today()
 
     # Get weather forecast
-    weather_data = await resource_weather_forecast(start_date, days)
+    read_weather_forecast = await ctx.read_resource(f"weather://coxsbazar/forecast/{start_date.strftime('%Y-%m-%d')}/{days}")
+    weather_data = json.loads(read_weather_forecast[0].content)
     
     # Generate base itinerary prompt
-    base_prompt = await generate_itinerary_prompt(days, start_date)
+    base_prompt = await get_itinerary_prompt(days, start_date)
     
     # Generate weather-based activities prompt
-    weather_prompt = await weather_based_activities_prompt(weather_data)
+    weather_prompt = await get_weather_based_activities_prompt(weather_data)
     
     # Format output
     output = f"""# Cox's Bazar Itinerary Planning

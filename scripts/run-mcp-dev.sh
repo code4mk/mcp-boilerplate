@@ -1,1 +1,0 @@
-uv run mcp dev src/mcp_server/server.py

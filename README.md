@@ -20,17 +20,20 @@ uv sync
 
 ## Usage
 
-### Run with MCP dev (development) - inspector tool
+### Run Inspector Tool
 
 * Need node version > 20.x.x
 
 ```bash
-uv run mcp dev src/mcp_server/server.py
+./scripts/run-inspector.sh
 ```
 
 ### Run as installed command
 ```bash
 uv run cox-mcp-server
+
+# script 
+./scripts/run-script.sh
 ```
 
 
@@ -49,6 +52,7 @@ uv run cox-mcp-server
 │   └── mcp_server/
 │       ├── __init__.py
 │       ├── server.py           # Main server entry point
+│       ├── mcp_instance.py     # MCP instance configuration
 │       ├── models/             # Pydantic models and schemas
 │       │   ├── __init__.py
 │       │   └── itinerary_models.py  # Itinerary data models
@@ -56,6 +60,7 @@ uv run cox-mcp-server
 │       │   ├── __init__.py
 │       │   ├── tools/          # MCP tools
 │       │   │   ├── __init__.py
+│       │   │   ├── auth_user.py    # User authentication tool
 │       │   │   └── itinerary.py    # Travel itinerary tools
 │       │   ├── resources/      # MCP resources
 │       │   │   ├── __init__.py
@@ -63,15 +68,29 @@ uv run cox-mcp-server
 │       │   └── prompts/        # MCP prompts
 │       │       ├── __init__.py
 │       │       └── travel_prompts.py  # Travel planning prompts
+│       ├── config/             # Configuration modules
+│       │   ├── auth_provider.py    # Authentication provider
+│       │   └── custom_routes.py    # Custom routes configuration
+│       ├── core/               # Core functionality
+│       │   ├── __init__.py
+│       │   └── prompts/
+│       │       ├── __init__.py
+│       │       └── get_travel_prompts.py  # Travel prompt handlers
 │       └── utils/              # Utilities
 │           ├── __init__.py
+│           ├── elicitation.py  # Elicitation utilities
+│           ├── get_weather_forecast.py  # Weather forecast utilities
 │           ├── helpers.py      # Helper functions
 │           ├── types.py        # Type definitions
 │           └── register_mcp_components.py  # MCP component registration
+├── scripts/                    # Shell scripts
+│   ├── run-inspector.sh        # Run MCP inspector
+│   └── run-script.sh           # Run server script
 ├── tests/                      # Test directory
 ├── _docs/                      # Documentation files
+│   └── remote-mcp-connect.md   # Remote MCP connection guide
+├── cox-mcp.jpeg                # Project image
 ├── Dockerfile                  # Docker configuration
-├── .dockerignore               # Docker ignore file
 ├── glama.json                  # Glama configuration
 ├── README.md                   # Project documentation
 ├── license                     # MIT License

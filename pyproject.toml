@@ -9,7 +9,7 @@ description = "Cox's Bazar AI Itinerary MCP Server"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "mcp[cli]>=1.20.0",
+    "fastmcp>=2.13.0.2",
     "python-dateutil>=2.9.0.post0",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
