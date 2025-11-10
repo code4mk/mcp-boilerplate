@@ -34,7 +34,7 @@ def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
         component_path = components_dir / component_type
         
         if not component_path.exists():
-            print(f"⚠️  Warning: {component_type} directory not found at {component_path}")
+            print(f"Warning: {component_type} directory not found at {component_path}")
             continue
         
         # Find all Python files in the component directory
@@ -50,9 +50,9 @@ def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
                 # Import the module (this triggers the decorators)
                 importlib.import_module(module_name)
                 registered_count[component_type] += 1
-                print(f"✅ Registered {component_type[:-1]}: {py_file.stem}")
+                print(f"Registered {component_type[:-1]}: {py_file.stem}")
             except Exception as e:
-                print(f"❌ Error importing {module_name}: {e}")
+                print(f"Error importing {module_name}: {e}")
                 # Continue with other modules even if one fails
                 continue
     
@@ -64,18 +64,18 @@ def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
             
             if custom_routes_file.exists():
                 importlib.import_module("mcp_server.config.custom_routes")
-                print(f"✅ Registered custom routes (transport: {transport})")
+                print(f"Registered custom routes (transport: {transport})")
             else:
-                print(f"⚠️  Warning: Custom routes file not found at {custom_routes_file}")
+                print(f"Warning: Custom routes file not found at {custom_routes_file}")
         except Exception as e:
-            print(f"❌ Error importing custom routes: {e}")
+            print(f"Error importing custom routes: {e}")
     
     # Print summary
-    print("\n📦 Registration Summary:")
-    print(f"   🔧 Tools: {registered_count['tools']}")
-    print(f"   💬 Prompts: {registered_count['prompts']}")
-    print(f"   📚 Resources: {registered_count['resources']}")
+    print("\nRegistration Summary:")
+    print(f"Tools: {registered_count['tools']}")
+    print(f"Prompts: {registered_count['prompts']}")
+    print(f"Resources: {registered_count['resources']}")
     if transport.lower() != "stdio":
-        print("   🛣️  Custom Routes: Enabled")
-    print(f"   📊 Total: {sum(registered_count.values())} components registered\n")
+        print("Custom Routes: Enabled")
+    print(f"Total: {sum(registered_count.values())} components registered\n")
 

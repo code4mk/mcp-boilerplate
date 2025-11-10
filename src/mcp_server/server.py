@@ -15,25 +15,22 @@ from mcp_server.mcp_instance import mcp
 
 load_dotenv()
 
-base_dir = Path(__file__).parent
-transport_name = os.environ.get("TRANSPORT_NAME") or "stdio"
-server_port = int(os.environ.get("SERVER_PORT") or 8000)
-server_host = os.environ.get("HOST") or "0.0.0.0"
-
-# Auto-register all MCP components (tools, prompts, resources)
-register_mcp_components(base_dir, transport=transport_name)
 
 
 def main():
     """Run the MCP server."""
-    print("🌴 Starting Cox's Bazar AI Itinerary MCP server...")
-    print("📍 Location: Cox's Bazar, Bangladesh")
-    print("🚀 Server ready!")
-    if not transport_name.lower() == "stdio":
-        mcp.run(transport=transport_name, port=server_port, host=str(server_host))
+    transport_name = os.environ.get("TRANSPORT_NAME") or "stdio"
+    server_port = int(os.environ.get("SERVER_PORT") or 8000)
+    server_host = os.environ.get("SERVER_HOST") or "0.0.0.0"
+
+    #Auto-register all MCP components (tools, prompts, resources)
+    base_dir = Path(__file__).parent
+    register_mcp_components(base_dir, transport=transport_name)
+    
+    if transport_name == "http" or transport_name == "streamable-http" or transport_name == "sse":
+        mcp.run(transport=transport_name, port=server_port, host=server_host)
     else:
         mcp.run(transport=transport_name)
-    
     
 if __name__ == "__main__":
     main()
