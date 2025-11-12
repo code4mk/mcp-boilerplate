@@ -1,6 +1,9 @@
-from mcp_server.server import mcp
+from mcp_server.mcp_instance import mcp
 
-@mcp.tool
+@mcp.tool(
+    name="get_user_info",
+    description="Return auth user info"
+)
 async def get_user_info() -> dict:
     """Returns information about the authenticated GitHub user."""
     from fastmcp.server.dependencies import get_access_token

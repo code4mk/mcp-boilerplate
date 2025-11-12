@@ -7,7 +7,10 @@ from mcp_server.utils.get_weather_forecast import get_activity_suggestions as ge
 from mcp_server.utils.elicitation import elicit_trip_extension
 from mcp_server.core.prompts.travel import get_itinerary_prompt, get_weather_based_activities_prompt
 
-@mcp.tool()
+@mcp.tool(
+    name="cox_ai_itinerary",
+    description="generate itinerary for coxs bazar",
+)
 async def cox_ai_itinerary(ctx: Context, start_date: str, days: int, ) -> str:
     """
     Full workflow: fetch daily temperatures + generate AI itinerary.
@@ -106,7 +109,10 @@ async def cox_ai_itinerary(ctx: Context, start_date: str, days: int, ) -> str:
     return output
 
 
-@mcp.tool()
+@mcp.tool(
+    name="get_activity_suggestions",
+    description="suggest activities based on temperature and time of day",
+)
 async def get_activity_suggestions(temperature: float, time_of_day: str = "afternoon") -> list[str]:
     """
     Suggest activities based on temperature and time of day.
