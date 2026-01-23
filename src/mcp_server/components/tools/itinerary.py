@@ -1,127 +1,41 @@
-import json
+
 from fastmcp import Context
-from datetime import datetime
-from dateutil import parser
 from mcp_server.mcp_instance import mcp
-from mcp_server.utils.get_weather_forecast import get_activity_suggestions as get_suggestions
-from mcp_server.utils.elicitation import elicit_trip_extension
-from mcp_server.core.prompts.travel import get_itinerary_prompt, get_weather_based_activities_prompt
+from mcp_server.core.services.itenerary_service import s_generate_itinerary, s_get_activity_suggestions
+from mcp_server.models.itinerary_models import GenerateItinerarySchema, GetActivitySuggestionsSchema
 
 @mcp.tool(
-    name="cox_ai_itinerary",
+    name="generate_itinerary",
     description="generate itinerary for coxs bazar",
 )
-async def cox_ai_itinerary(ctx: Context, start_date: str, days: int, ) -> str:
-    """
-    Full workflow: fetch daily temperatures + generate AI itinerary.
-    Uses the registered MCP prompt 'generate_itinerary' for consistency.
-    
+async def generate_itinerary(
+    ctx: Context,
+    params: GenerateItinerarySchema
+) -> str:
+    """ Generate itinerary for coxs bazar
     Args:
-        days: Number of days for the trip
-        start_date: Start date (e.g., "2025-01-15", "15 Jan 2025", "today")
-    
+        ctx: FastMCP Context
+        params: GenerateItinerarySchema: Parameters for generating an itinerary
     Returns:
-        Formatted prompt for AI to generate detailed itinerary
+        str: Itinerary for coxs bazar
     """
-    
-    # Elicit trip extension if needed (minimum 2 days recommended)
-    try:
-        days, elicitation_note = await elicit_trip_extension(ctx, start_date, days, min_days=2)
-    except ValueError as e:
-        # User cancelled the trip extension
-        await ctx.error(f"Error: {str(e)}")
-        return str(e)
-    
-    # Parse start date
-    try:
-        start_date = parser.parse(start_date)
-    except Exception:
-        start_date = datetime.today()
-
-    # Get weather forecast
-    read_weather_forecast = await ctx.read_resource(f"weather://coxsbazar/forecast/{start_date.strftime('%Y-%m-%d')}/{days}")
-    weather_data = json.loads(read_weather_forecast[0].content)
-    
-    # Generate base itinerary prompt
-    base_prompt = await get_itinerary_prompt(days, start_date)
-    
-    # Generate weather-based activities prompt
-    weather_prompt = await get_weather_based_activities_prompt(weather_data)
-    
-    # Format output
-    output = f"""# Cox's Bazar Itinerary Planning
-
-## Trip Details
-- **Location:** {weather_data['location']}
-- **Start Date:** {weather_data['start_date']}
-- **Duration:** {days} day(s)
-- **Timezone:** {weather_data['timezone']}
-
-## Weather Forecast
-
-"""
-    
-    # Add detailed forecast
-    for day in weather_data['forecast']:
-        output += f"""### Day {day['day']} - {day['date']}
-- **Weather:** {day['weather']}
-- **Temperature:** {day['temp_min']}°C - {day['temp_max']}°C (Average: {day['temp_avg']}°C)
-- **Precipitation:** {day['precipitation']}mm
-- **Wind Speed:** {day['windspeed']} km/h
-- **Sunrise:** {day['sunrise']} | **Sunset:** {day['sunset']}
-
-**Activity Suggestions:**
-"""
-        
-        # Get activity suggestions for different times
-        temp_avg = day['temp_avg']
-        morning_activities = get_suggestions(temp_avg - 2, "morning")
-        afternoon_activities = get_suggestions(temp_avg, "afternoon")
-        evening_activities = get_suggestions(temp_avg, "evening")
-        
-        output += f"""
-- **Morning:** {', '.join(morning_activities[:2])}
-- **Afternoon:** {', '.join(afternoon_activities[:2])}
-- **Evening:** {', '.join(evening_activities[:2])}
-
-{elicitation_note}
-
-"""
-    
-    output += f"""
----
-
-## AI Itinerary Generation Prompt
-
-{base_prompt}
-
----
-
-## Weather-Based Activities Prompt
-
-{weather_prompt}
-
----
-
-**Note:** Use the above prompts with an AI assistant to generate a detailed, personalized itinerary based on the weather forecast and your preferences.
-"""
-    
+    output = await s_generate_itinerary(ctx, params.start_date, params.days)
     return output
-
 
 @mcp.tool(
     name="get_activity_suggestions",
     description="suggest activities based on temperature and time of day",
 )
-async def get_activity_suggestions(temperature: float, time_of_day: str = "afternoon") -> list[str]:
+async def get_activity_suggestions(
+    ctx: Context,
+    params: GetActivitySuggestionsSchema
+) -> list[str]:
     """
-    Suggest activities based on temperature and time of day.
-    
+    Suggest activities based on temperature and time of day
     Args:
-        temperature: Temperature in Celsius
-        time_of_day: "morning", "afternoon", or "evening"
-    
+        ctx: FastMCP Context
+        params: GetActivitySuggestionsSchema: Parameters for getting activity suggestions
     Returns:
-        List of suggested activities
+        list[str]: List of suggested activities
     """
-    return get_suggestions(temperature, time_of_day)
+    return await s_get_activity_suggestions(params.temperature, params.time_of_day)
