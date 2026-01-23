@@ -2,6 +2,7 @@
 import sys
 import os
 from pathlib import Path
+
 # Add src directory to path if running directly
 if __name__ == "__main__" or "mcp_server" not in sys.modules:
     src_path = Path(__file__).parent.parent  # This points to src/
@@ -9,12 +10,10 @@ if __name__ == "__main__" or "mcp_server" not in sys.modules:
         sys.path.insert(0, str(src_path))
 
 from dotenv import load_dotenv
-from mcp_server.utils.register_mcp_components import register_mcp_components
+from fastmcp.server.providers import FileSystemProvider
 from mcp_server.mcp_instance import mcp
 
-
 load_dotenv()
-
 
 
 def main():
@@ -24,8 +23,8 @@ def main():
     server_host = os.environ.get("SERVER_HOST") or "0.0.0.0"
 
     #Auto-register all MCP components (tools, prompts, resources)
-    base_dir = Path(__file__).parent
-    register_mcp_components(base_dir, transport=transport_name)
+    components_dir = Path(__file__).parent / "components"
+    mcp.providers.append(FileSystemProvider(components_dir))
     
     if transport_name == "http" or transport_name == "streamable-http" or transport_name == "sse":
         mcp.run(transport=transport_name, port=server_port, host=server_host)
