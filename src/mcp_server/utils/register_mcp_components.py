@@ -5,7 +5,48 @@ Automatically discovers and imports all tools, prompts, and resources
 from their respective component directories.
 """
 import importlib
+import re
 from pathlib import Path
+
+
+def count_decorators_in_file(file_path: Path, component_type: str) -> int:
+    """
+    Count the number of MCP decorators in a Python file.
+    
+    Args:
+        file_path: Path to the Python file
+        component_type: Type of component ("tools", "prompts", or "resources")
+    
+    Returns:
+        Number of decorators found
+    """
+    try:
+        content = file_path.read_text()
+        
+        # Map component type to decorator pattern
+        decorator_patterns = {
+            "tools": r"@mcp\.tool\(",
+            "prompts": r"@mcp\.prompt\(",
+            "resources": r"@mcp\.resource\("
+        }
+        
+        pattern = decorator_patterns.get(component_type)
+        if not pattern:
+            return 0
+        
+        # Filter out commented lines and count matches only in active code
+        count = 0
+        for line in content.split('\n'):
+            stripped = line.strip()
+            # Skip lines that are comments (start with #)
+            if not stripped.startswith('#'):
+                if re.search(pattern, line):
+                    count += 1
+        
+        return count
+    except Exception as e:
+        print(f"Error counting decorators in {file_path}: {e}")
+        return 0
 
 
 def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
@@ -49,8 +90,12 @@ def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
             try:
                 # Import the module (this triggers the decorators)
                 importlib.import_module(module_name)
-                registered_count[component_type] += 1
-                print(f"Registered {component_type[:-1]}: {py_file.stem}")
+                
+                # Count decorators by reading the source file
+                decorator_count = count_decorators_in_file(py_file, component_type)
+                registered_count[component_type] += decorator_count
+                
+                print(f"Registered {component_type[:-1]} file: {py_file.stem} ({decorator_count} {component_type[:-1]}{'s' if decorator_count != 1 else ''})")
             except Exception as e:
                 print(f"Error importing {module_name}: {e}")
                 # Continue with other modules even if one fails
@@ -71,11 +116,13 @@ def register_mcp_components(base_dir: Path, transport: str = "stdio") -> None:
             print(f"Error importing custom routes: {e}")
     
     # Print summary
-    print("\nRegistration Summary:")
+    print("\n" + "="*50)
+    print("Registration Summary:")
+    print("="*50)
     print(f"Tools: {registered_count['tools']}")
     print(f"Prompts: {registered_count['prompts']}")
     print(f"Resources: {registered_count['resources']}")
     if transport.lower() != "stdio":
         print("Custom Routes: Enabled")
-    print(f"Total: {sum(registered_count.values())} components registered\n")
-
+    print(f"\nTotal: {sum(registered_count.values())} components registered")
+    print("="*50 + "\n")
