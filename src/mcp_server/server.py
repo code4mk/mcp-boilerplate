@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 from fastmcp.server.providers import FileSystemProvider
 from mcp_server.mcp_instance import mcp
 
+#from fastmcp.server.middleware import AuthMiddleware
+#from fastmcp.server.auth import require_auth
+
+
 load_dotenv()
 
 
@@ -26,6 +30,9 @@ def main():
     components_dir = Path(__file__).parent / "components"
     mcp.providers.append(FileSystemProvider(components_dir))
     
+    # global auth middleware
+    #mcp.middleware.append(AuthMiddleware(auth=require_auth))
+
     if transport_name == "http" or transport_name == "streamable-http" or transport_name == "sse":
         mcp.run(transport=transport_name, port=server_port, host=server_host)
     else:
