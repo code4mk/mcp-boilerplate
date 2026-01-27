@@ -18,5 +18,5 @@ if is_oauth_enabled:
 
 
 # Initialize FastMCP with valid parameters only
-mcp = FastMCP(**mcp_config_context)
+mcp = FastMCP(**mcp_config_context, strict_input_validation=True)
 

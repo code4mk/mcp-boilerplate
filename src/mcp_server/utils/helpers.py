@@ -1,6 +1,10 @@
 """Helper utility functions."""
 from datetime import datetime
 from dateutil import parser
+from fastmcp.server.auth import AuthContext
+from fastmcp.server.dependencies import (
+    get_http_request, get_http_headers, get_context
+)
 
 def format_date(date_str: str) -> str:
     """
@@ -63,3 +67,22 @@ def format_temperature(temp: float) -> str:
     return f"{temp_str} ({desc})"
 
 
+
+def require_premium_user(ctx: AuthContext) -> bool:
+    """Check for premium user status in token claims."""
+    if ctx.token is None:
+        return False
+    return True
+
+def get_client_ip() -> str:
+    request = get_http_request()
+    return request.client.host if request.client else "Unknown"
+
+
+def get_user_agent() -> str:
+    headers = get_http_headers()
+    return headers.get("user-agent", "Unknown")
+
+def get_mcp_client_name() -> str:
+    ctx = get_context()
+    return ctx.request_context.session.client_params.clientInfo.name or "Unknown"
