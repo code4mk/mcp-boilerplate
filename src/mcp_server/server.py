@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 from fastmcp.server.providers import FileSystemProvider
 from mcp_server.mcp_instance import mcp
 
+from fastmcp.server.middleware.rate_limiting import RateLimitingMiddleware
+
 #from fastmcp.server.middleware import AuthMiddleware
 #from fastmcp.server.auth import require_auth
 
@@ -29,6 +31,13 @@ def main():
     #Auto-register all MCP components (tools, prompts, resources)
     components_dir = Path(__file__).parent / "components"
     mcp.providers.append(FileSystemProvider(components_dir))
+
+    mcp.add_middleware(RateLimitingMiddleware(
+        max_requests_per_second=10.0,
+        burst_capacity=20,
+        get_client_id=lambda ctx: ctx.fastmcp_context.session_id if ctx.fastmcp_context else "unknown"
+    ))
+
     
     # global auth middleware
     #mcp.middleware.append(AuthMiddleware(auth=require_auth))
