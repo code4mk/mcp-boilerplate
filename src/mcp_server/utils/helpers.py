@@ -86,3 +86,7 @@ def get_user_agent() -> str:
 def get_mcp_client_name() -> str:
     ctx = get_context()
     return ctx.request_context.session.client_params.clientInfo.name or "Unknown"
+
+def get_mcp_session_id() -> str:
+    ctx = get_context()
+    return ctx.session_id
