@@ -1,4 +1,6 @@
-# Cox's Bazar AI Itinerary MCP Server
+# Production Ready MCP Boilerplate
+
+## Cox's Bazar AI Itinerary MCP Server
 
 A Model Context Protocol (MCP) server that provides travel planning tools and weather information for Cox's Bazar, Bangladesh.
 
@@ -12,7 +14,7 @@ A Model Context Protocol (MCP) server that provides travel planning tools and we
 - **Itinerary Tools**: Generate AI-powered travel itineraries
 - **Travel Prompts**: Pre-configured prompts for travel planning
 
-## Installation
+## Getting Started
 
 ```bash
 uv sync
@@ -29,20 +31,15 @@ uv sync
 ```
 
 ### Run as installed command
-```bash
-uv run cox-mcp-server
+This is serve the mcp server with auto-reload feature.
 
-# script 
-./scripts/run-script.sh
+```bash
+./scripts/run-mcp-server.sh
 ```
 
 
 ## Requirements
-
 - Python 3.13+
-- mcp[cli] >= 1.20.0
-- python-dateutil >= 2.9.0
-- requests >= 2.32.5
 
 ## Project Structure
 
@@ -60,8 +57,8 @@ uv run cox-mcp-server
 │       │   ├── __init__.py
 │       │   ├── tools/          # MCP tools
 │       │   │   ├── __init__.py
-│       │   │   ├── auth_user.py    # User authentication tool
-│       │   │   └── itinerary.py    # Travel itinerary tools
+│       │   │   ├── auth_additional.py  # Additional authentication tool
+│       │   │   └── itinerary.py        # Travel itinerary tools
 │       │   ├── resources/      # MCP resources
 │       │   │   ├── __init__.py
 │       │   │   └── weather.py      # Weather data resources
@@ -73,27 +70,26 @@ uv run cox-mcp-server
 │       │   └── custom_routes.py    # Custom routes configuration
 │       ├── core/               # Core functionality
 │       │   ├── __init__.py
-│       │   └── prompts/
-│       │       ├── __init__.py
-│       │       └── get_travel_prompts.py  # Travel prompt handlers
+│       │   ├── prompts/
+│       │   │   ├── __init__.py
+│       │   │   └── travel.py       # Travel prompt handlers
+│       │   └── services/
+│       │       └── itenerary_service.py  # Itinerary business logic
 │       └── utils/              # Utilities
 │           ├── __init__.py
 │           ├── elicitation.py  # Elicitation utilities
 │           ├── get_weather_forecast.py  # Weather forecast utilities
-│           ├── helpers.py      # Helper functions
-│           ├── types.py        # Type definitions
-│           └── register_mcp_components.py  # MCP component registration
+│           └── helpers.py      # Helper functions
 ├── scripts/                    # Shell scripts
 │   ├── run-inspector.sh        # Run MCP inspector
-│   └── run-script.sh           # Run server script
-├── tests/                      # Test directory
-├── _docs/                      # Documentation files
-│   └── remote-mcp-connect.md   # Remote MCP connection guide
-├── cox-mcp.jpeg                # Project image
+│   └── run-mcp-server.sh       # Run server script
+├── tests/*                     # Test directory (unit, integration, fixtures)
+├── _docs/*                     # Documentation files
 ├── Dockerfile                  # Docker configuration
 ├── glama.json                  # Glama configuration
+├── pytest.ini                  # Pytest configuration
 ├── README.md                   # Project documentation
-├── license                     # MIT License
+├── LICENSE                     # MIT License
 ├── pyproject.toml              # Project configuration and dependencies
 └── uv.lock                     # Dependency lock file
 ```
