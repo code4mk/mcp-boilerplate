@@ -21,5 +21,5 @@ RUN uv sync --frozen --no-dev
 # EXPOSE 8000
 
 # Set the entrypoint to run the MCP server
-ENTRYPOINT ["uv", "run", "cox-mcp-server"]
+ENTRYPOINT ["uv", "run", "mcp-server"]
 

@@ -109,7 +109,7 @@ Add this configuration to your Claude Desktop config file (`~/Library/Applicatio
         "--directory",
         "/Users/code4mk/Documents/GitHub/gumpper-group/mcp-explore/mcp-server-python-template",
         "run",
-        "cox-mcp-server"
+        "mcp-server"
       ]
     }
   }
@@ -157,7 +157,7 @@ Add this configuration to your Claude Desktop config file:
       "args": [
         "--from",
         "git+https://github.com/code4mk/coxs-bazar-itinerary-mcp-server.git",
-        "cox-mcp-server"
+        "mcp-server"
       ]
     }
   }
