@@ -23,15 +23,15 @@ def resource_weather_forecast_func():
     
     try:
         # Clear module cache and re-import to get undecorated function
-        if 'mcp_server.components.resources.weather' in sys.modules:
-            del sys.modules['mcp_server.components.resources.weather']
-        from mcp_server.components.resources import weather
+        if 'mcp_server.handlers.resources.weather' in sys.modules:
+            del sys.modules['mcp_server.handlers.resources.weather']
+        from mcp_server.handlers.resources import weather
         yield weather.resource_weather_forecast, weather
     finally:
         decorator_patcher.stop()
         # Clean up module cache
-        if 'mcp_server.components.resources.weather' in sys.modules:
-            del sys.modules['mcp_server.components.resources.weather']
+        if 'mcp_server.handlers.resources.weather' in sys.modules:
+            del sys.modules['mcp_server.handlers.resources.weather']
 
 
 @pytest.mark.unit

@@ -30,7 +30,7 @@ We are building a production-ready Model Context Protocol (MCP) server template 
 
 - **High-level API**: FastMCP provides a decorator-based, Flask/FastAPI-like API for registering tools, resources, and prompts — drastically reducing boilerplate compared to the low-level `mcp` SDK.
 - **Multi-transport support**: A single codebase can serve over stdio (for Claude Desktop), SSE, or Streamable HTTP — configurable at runtime via environment variables.
-- **FileSystemProvider**: Auto-discovers and registers MCP components from directory structures, enabling a clean modular architecture (`components/tools/`, `components/resources/`, `components/prompts/`).
+- **FileSystemProvider**: Auto-discovers and registers MCP components from directory structures, enabling a clean modular architecture (`handlers/tools/`, `handlers/resources/`, `handlers/prompts/`).
 - **Built-in middleware**: Ships with `RateLimitingMiddleware` and supports custom middleware, removing the need to build infrastructure plumbing from scratch.
 - **OAuth / Auth support**: Native integration with auth providers (e.g., GitHub OAuth), toggled via configuration.
 - **Pydantic integration**: Works naturally with Pydantic models for input validation (`strict_input_validation=True`), aligning with modern Python best practices.
@@ -52,7 +52,7 @@ We are building a production-ready Model Context Protocol (MCP) server template 
 - **Beta dependency**: Using `>=3.0.0b1` means relying on a pre-release version; breaking changes may occur before stable release
 - **Abstraction lock-in**: The high-level API abstracts away low-level MCP protocol details, which could limit flexibility for edge cases
 - **Ecosystem maturity**: The MCP ecosystem is still evolving; framework APIs may shift as the spec matures
-- **Debugging complexity**: Auto-registration via `FileSystemProvider` can make it harder to trace which components are loaded and in what order
+- **Debugging complexity**: Auto-registration via `FileSystemProvider` can make it harder to trace which handlers are loaded and in what order
 
 ---
 

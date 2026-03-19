@@ -69,7 +69,7 @@ Tests are organized using pytest markers defined in `pytest.ini`:
 1. **test_models.py** - Tests for data models (ItineraryPreferences, Location, etc.)
 2. **test_elicitation.py** - Tests for preference elicitation utilities
 3. **test_weather_forecast.py** - Tests for weather forecast utilities
-4. **test_weather_resource.py** - Tests for weather resource components
+4. **test_weather_resource.py** - Tests for weather resource handlers
 5. **test_travel_prompts.py** - Tests for travel prompt generation
 
 #### Integration Tests

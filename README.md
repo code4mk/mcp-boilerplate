@@ -53,7 +53,7 @@ This is serve the mcp server with auto-reload feature.
 │       ├── models/             # Pydantic models and schemas
 │       │   ├── __init__.py
 │       │   └── itinerary_models.py  # Itinerary data models
-│       ├── components/         # MCP components
+│       ├── handlers/           # MCP handler registrations
 │       │   ├── __init__.py
 │       │   ├── tools/          # MCP tools
 │       │   │   ├── __init__.py

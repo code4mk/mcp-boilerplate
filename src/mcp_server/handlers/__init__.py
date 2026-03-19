@@ -1,7 +1,7 @@
 """
-MCP Components package.
+MCP Handlers package.
 
-This package contains all MCP components organized into:
+This package contains all MCP handler registrations organized into:
 - resources: Data fetching and resource functions
 - prompts: AI prompt generation functions  
 - tools: Tools that combine resources and prompts
@@ -9,7 +9,7 @@ This package contains all MCP components organized into:
 All functions are designed to be importable and reusable.
 """
 
-from mcp_server.components import resources, prompts, tools
+from mcp_server.handlers import resources, prompts, tools
 
 __all__ = ["resources", "prompts", "tools"]
 

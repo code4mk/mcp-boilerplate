@@ -28,15 +28,15 @@ def cox_ai_itinerary_func():
     
     try:
         # Clear module cache and re-import to get undecorated function
-        if 'mcp_server.components.tools.itinerary' in sys.modules:
-            del sys.modules['mcp_server.components.tools.itinerary']
-        from mcp_server.components.tools import itinerary
+        if 'mcp_server.handlers.tools.itinerary' in sys.modules:
+            del sys.modules['mcp_server.handlers.tools.itinerary']
+        from mcp_server.handlers.tools import itinerary
         yield itinerary.cox_ai_itinerary
     finally:
         decorator_patcher.stop()
         # Clean up module cache
-        if 'mcp_server.components.tools.itinerary' in sys.modules:
-            del sys.modules['mcp_server.components.tools.itinerary']
+        if 'mcp_server.handlers.tools.itinerary' in sys.modules:
+            del sys.modules['mcp_server.handlers.tools.itinerary']
 
 
 @pytest.mark.integration
@@ -58,8 +58,8 @@ class TestCoxAiItinerary:
         ]
         
         # Mock prompt generation
-        with patch("mcp_server.components.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
-             patch("mcp_server.components.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
+        with patch("mcp_server.handlers.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
+             patch("mcp_server.handlers.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
             
             mock_prompt.return_value = "Base itinerary prompt"
             mock_weather_prompt.return_value = "Weather-based prompt"
@@ -90,8 +90,8 @@ class TestCoxAiItinerary:
             Mock(content=json.dumps(sample_weather_data))
         ]
         
-        with patch("mcp_server.components.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
-             patch("mcp_server.components.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
+        with patch("mcp_server.handlers.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
+             patch("mcp_server.handlers.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
             
             mock_prompt.return_value = "Base prompt"
             mock_weather_prompt.return_value = "Weather prompt"
@@ -128,8 +128,8 @@ class TestCoxAiItinerary:
             Mock(content=json.dumps(sample_weather_data))
         ]
         
-        with patch("mcp_server.components.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
-             patch("mcp_server.components.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
+        with patch("mcp_server.handlers.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
+             patch("mcp_server.handlers.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
             
             mock_prompt.return_value = "Base prompt"
             mock_weather_prompt.return_value = "Weather prompt"
@@ -150,8 +150,8 @@ class TestCoxAiItinerary:
             Mock(content=json.dumps(sample_weather_data))
         ]
         
-        with patch("mcp_server.components.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
-             patch("mcp_server.components.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
+        with patch("mcp_server.handlers.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
+             patch("mcp_server.handlers.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
             
             mock_prompt.return_value = "Base prompt"
             mock_weather_prompt.return_value = "Weather prompt"
@@ -177,8 +177,8 @@ class TestCoxAiItinerary:
             Mock(content=json.dumps(sample_weather_data))
         ]
         
-        with patch("mcp_server.components.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
-             patch("mcp_server.components.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
+        with patch("mcp_server.handlers.tools.itinerary.get_itinerary_prompt") as mock_prompt, \
+             patch("mcp_server.handlers.tools.itinerary.get_weather_based_activities_prompt") as mock_weather_prompt:
             
             mock_prompt.return_value = "Base prompt"
             mock_weather_prompt.return_value = "Weather prompt"

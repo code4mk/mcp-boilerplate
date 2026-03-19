@@ -28,10 +28,10 @@ def main():
     server_port = int(os.environ.get("SERVER_PORT") or 8000)
     server_host = os.environ.get("SERVER_HOST") or "0.0.0.0"
 
-    #Auto-register all MCP components (tools, prompts, resources, custom routes)
-    components_dir = Path(__file__).parent / "components"
+    #Auto-register all MCP handlers (tools, prompts, resources, custom routes)
+    handlers_dir = Path(__file__).parent / "handlers"
     custom_routes_dir = Path(__file__).parent / "config" / "custom_routes.py"
-    mcp.providers.append(FileSystemProvider(components_dir))
+    mcp.providers.append(FileSystemProvider(handlers_dir))
     mcp.providers.append(FileSystemProvider(custom_routes_dir))
 
 

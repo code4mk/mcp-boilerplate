@@ -1,2 +1,2 @@
-"""Unit tests for MCP server components."""
+"""Unit tests for MCP server."""
 
