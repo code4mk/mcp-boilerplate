@@ -68,13 +68,11 @@ This is serve the mcp server with auto-reload feature.
 │       ├── config/             # Configuration modules
 │       │   ├── auth_provider.py    # Authentication provider
 │       │   └── custom_routes.py    # Custom routes configuration
-│       ├── core/               # Core functionality
+│       ├── services/           # Business logic
+│       │   └── itenerary_service.py  # Itinerary business logic
+│       ├── prompt_templates/   # Prompt text builders
 │       │   ├── __init__.py
-│       │   ├── prompts/
-│       │   │   ├── __init__.py
-│       │   │   └── travel.py       # Travel prompt handlers
-│       │   └── services/
-│       │       └── itenerary_service.py  # Itinerary business logic
+│       │   └── travel.py       # Travel prompt templates
 │       └── utils/              # Utilities
 │           ├── __init__.py
 │           ├── elicitation.py  # Elicitation utilities

@@ -1,6 +1,6 @@
 """Unit tests for travel prompt generation."""
 import pytest
-from mcp_server.core.prompts.travel import (
+from mcp_server.prompt_templates.travel import (
     get_itinerary_prompt,
     get_weather_based_activities_prompt,
 )

@@ -1,7 +1,7 @@
 
 from fastmcp import Context
 from mcp_server.mcp_instance import mcp
-from mcp_server.core.services.itenerary_service import s_generate_itinerary, s_get_activity_suggestions
+from mcp_server.services.itenerary_service import s_generate_itinerary, s_get_activity_suggestions
 from mcp_server.models.itinerary_models import GenerateItinerarySchema, GetActivitySuggestionsSchema
 
 @mcp.tool(
