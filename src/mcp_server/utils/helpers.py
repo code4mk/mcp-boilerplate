@@ -5,6 +5,11 @@ from fastmcp.server.auth import AuthContext
 from fastmcp.server.dependencies import (
     get_http_request, get_http_headers, get_context
 )
+import os
+from dotenv import load_dotenv
+import requests
+
+load_dotenv()
 
 def format_date(date_str: str) -> str:
     """
@@ -68,6 +73,18 @@ def format_temperature(temp: float) -> str:
 
 
 
+def require_permissions(*required: str):
+    """Return an auth checker that verifies the token's `permissions` claim."""
+    required_set = set(required)
+
+    def check(ctx: AuthContext) -> bool:
+        if ctx.token is None:
+            return False
+        permissions = ctx.token.claims.get("permissions", [])
+        return required_set.issubset(set(permissions))
+
+    return check
+
 def require_premium_user(ctx: AuthContext) -> bool:
     """Check for premium user status in token claims."""
     if ctx.token is None:
@@ -90,3 +107,11 @@ def get_mcp_client_name() -> str:
 def get_mcp_session_id() -> str:
     ctx = get_context()
     return ctx.session_id
+
+def get_auth0_user_info(token: str) -> dict:
+    auth0_domain = os.getenv("AUTH0_DOMAIN")
+    url = f"https://{auth0_domain}/userinfo"
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
