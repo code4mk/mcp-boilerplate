@@ -13,6 +13,7 @@ ADRs provide a decision log that helps current and future team members understan
 | ADR | Title | Status | Date |
 |-----|-------|--------|------|
 | [001](001-choose-fastmcp.md) | Use FastMCP as the MCP Server Framework | Accepted | 2025-06-01 |
+| [002](002-choose-httpx.md) | Use HTTPX as the HTTP Client Library | Accepted | 2026-03-24 |
 
 ## How to Create a New ADR
 
