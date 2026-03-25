@@ -1,9 +1,9 @@
 """Weather forecast utility using Open-Meteo API."""
 
-import requests
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
 from dateutil import parser
+from mcp_server.utils.http import open_meteo_client
 
 
 # Cox's Bazar coordinates
@@ -41,8 +41,6 @@ def get_weather_forecast(start_date: str, days: int) -> Dict[str, Any]:
     start_date_str = start_dt.strftime("%Y-%m-%d")
     end_date_str = end_dt.strftime("%Y-%m-%d")
     
-    # Build API URL
-    base_url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": COX_BAZAR_LAT,
         "longitude": COX_BAZAR_LON,
@@ -53,7 +51,7 @@ def get_weather_forecast(start_date: str, days: int) -> Dict[str, Any]:
     }
     
     try:
-        response = requests.get(base_url, params=params, timeout=10)
+        response = open_meteo_client.get("/v1/forecast", params=params)
         response.raise_for_status()
         data = response.json()
         
