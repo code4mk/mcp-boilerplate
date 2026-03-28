@@ -4,6 +4,7 @@ from key_value.aio.wrappers.encryption import FernetEncryptionWrapper
 from cryptography.fernet import Fernet
 from fastmcp.server.auth.providers.github import GitHubProvider
 from fastmcp.server.auth.providers.auth0 import Auth0Provider
+from mcp_server.lib.clerk_auth_provider import ClerkProvider
 
 def get_client_storage():
   """Get the client storage."""
@@ -56,6 +57,24 @@ def get_auth_provider(provider_name: str):
 
       jwt_signing_key=os.environ["JWT_SIGNING_KEY"],
       client_storage=client_storage
+    )
+  elif provider_name.lower() == "clerk":
+
+    clerk_domain = os.getenv("CLERK_DOMAIN")
+    clerk_client_id = os.getenv("CLERK_CLIENT_ID")
+    clerk_client_secret = os.getenv("CLERK_CLIENT_SECRET")
+    base_url = os.getenv("RESOURCE_BASE_URL", "http://localhost:8000")
+    client_storage = get_client_storage()
+
+    return ClerkProvider(
+      domain=clerk_domain,
+      client_id=clerk_client_id,
+      client_secret=clerk_client_secret,
+      base_url=base_url,
+      required_scopes=["openid", "email", "profile"],
+
+      jwt_signing_key=os.environ["JWT_SIGNING_KEY"],
+      client_storage=client_storage,
     )
   else:
     raise ValueError(f"Unsupported provider: {provider_name}")
