@@ -45,6 +45,8 @@ async def get_user_info() -> dict:
 )
 async def custom_auth_tool() -> dict:
     """Custom auth tool"""
+    token = get_access_token()
+    print(token)
     return {
         "message": "Custom auth tool"
     }
